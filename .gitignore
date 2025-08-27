@@ -6,6 +6,9 @@ pnpm-debug.log*
 
 # Node
 node_modules
+vite.config.js
+vite.config.d.ts
+tsconfig.*.tsbuildinfo
 
 # Production
 dist
