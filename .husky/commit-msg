@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+# Проверка сообщения коммита по Conventional Commits
+npx --no-install commitlint --edit "$1"
+

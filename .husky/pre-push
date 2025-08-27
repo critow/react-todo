@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+
+# Проверка типов и тестов перед пушем
+yarn typecheck
+yarn test
