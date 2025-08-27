@@ -36,7 +36,13 @@ export default [
     },
   },
   {
-    files: ['vite.config.ts', 'tailwind.config.js', 'postcss.config.js', 'eslint.config.js'],
+    files: [
+      'vite.config.ts',
+      'vite.config.js',
+      'tailwind.config.js',
+      'postcss.config.js',
+      'eslint.config.js',
+    ],
     languageOptions: {
       globals: { ...globals.node },
     },
