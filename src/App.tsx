@@ -84,8 +84,16 @@ function App() {
     if (!over) return
     const fromId = String(a.id)
     const toId = String(over.id)
-    const fromGroup = activeIds.includes(fromId) ? 'active' : completedIds.includes(fromId) ? 'completed' : null
-    const toGroup = activeIds.includes(toId) ? 'active' : completedIds.includes(toId) ? 'completed' : null
+    const fromGroup = activeIds.includes(fromId)
+      ? 'active'
+      : completedIds.includes(fromId)
+        ? 'completed'
+        : null
+    const toGroup = activeIds.includes(toId)
+      ? 'active'
+      : completedIds.includes(toId)
+        ? 'completed'
+        : null
     if (!fromGroup || !toGroup) return
     if (fromGroup !== toGroup) {
       // Перетаскивание между группами можно включить позже (автотоггл).
@@ -95,7 +103,9 @@ function App() {
   }
 
   function SortableItem({ todo }: { todo: Todo }) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: todo.id })
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+      id: todo.id,
+    })
     const style = {
       transform: CSS.Transform.toString(transform),
       transition,
@@ -194,7 +204,11 @@ function App() {
           {active.length === 0 ? (
             <p className="text-sm text-gray-500">Пока пусто — добавьте первую задачу.</p>
           ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
               <SortableContext items={activeIds} strategy={verticalListSortingStrategy}>
                 <ul className="divide-y divide-gray-200 rounded-md border border-gray-200 bg-white">
                   {active.map(t => (
@@ -207,11 +221,17 @@ function App() {
         </section>
 
         <section aria-labelledby="done-heading">
-          <h2 id="done-heading" className="text-lg font-semibold mb-3">Завершённые</h2>
+          <h2 id="done-heading" className="text-lg font-semibold mb-3">
+            Завершённые
+          </h2>
           {completed.length === 0 ? (
             <p className="text-sm text-gray-500">Ещё нет завершённых задач.</p>
           ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
               <SortableContext items={completedIds} strategy={verticalListSortingStrategy}>
                 <ul className="divide-y divide-gray-200 rounded-md border border-gray-200 bg-white">
                   {completed.map(t => (

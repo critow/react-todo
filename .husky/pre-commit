@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
+set -e
 
-# Run lint-staged on staged files
+# Автофикс по изменённым файлам
 npx --no-install lint-staged
 
+# Полные проверки на коммите
+yarn format:check
+yarn lint
+yarn typecheck
+yarn test
