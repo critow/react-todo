@@ -9,8 +9,8 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { Todo } from '../../../entities/todo/model/types'
-import { TodoItem } from '../../todo-item/ui/TodoItem'
+import type { Todo } from '~/entities/todo/model/types'
+import { TodoItem } from '~/features/todo-item/ui/TodoItem'
 
 type Props = {
   items: Todo[]
@@ -38,10 +38,24 @@ function SortableTodo({
       ref={setNodeRef}
       style={style}
       className={`bg-white ${isDragging ? 'bg-indigo-50 shadow-sm' : ''}`}
-      {...attributes}
-      {...listeners}
     >
-      <TodoItem todo={todo} onToggle={onToggle} onRemove={onRemove} />
+      <TodoItem
+        todo={todo}
+        onToggle={onToggle}
+        onRemove={onRemove}
+        dragHandle={
+          <button
+            type="button"
+            aria-label="Переместить задачу"
+            title="Переместить"
+            className="mr-1 cursor-grab touch-none select-none text-gray-300 hover:text-gray-500"
+            {...attributes}
+            {...listeners}
+          >
+            ⋮⋮
+          </button>
+        }
+      />
     </li>
   )
 }

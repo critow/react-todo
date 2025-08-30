@@ -1,15 +1,18 @@
-import type { Todo } from '../../../entities/todo/model/types'
+import type { ReactNode } from 'react'
+import type { Todo } from '~/entities/todo/model/types'
 
 type Props = {
   todo: Todo
   onToggle: (id: string) => void
   onRemove: (id: string) => void
+  dragHandle?: ReactNode
 }
 
-export function TodoItem({ todo, onToggle, onRemove }: Props) {
+export function TodoItem({ todo, onToggle, onRemove, dragHandle }: Props) {
   const base = todo.completed ? 'text-gray-500 line-through' : 'text-gray-900'
   return (
-    <li className="flex items-center gap-3 p-3 select-none">
+    <div className="flex items-center gap-3 p-3 select-none">
+      {dragHandle}
       <input
         id={`todo-${todo.id}`}
         type="checkbox"
@@ -28,6 +31,6 @@ export function TodoItem({ todo, onToggle, onRemove }: Props) {
       >
         ✕
       </button>
-    </li>
+    </div>
   )
 }
