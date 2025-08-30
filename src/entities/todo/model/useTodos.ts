@@ -44,6 +44,12 @@ export function useTodos() {
     setTodos(prev => prev.filter(t => t.id !== id))
   }
 
+  function edit(id: string, text: string) {
+    const value = text.trim()
+    if (!value) return
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, text: value } : t)))
+  }
+
   function reorderInGroup(group: 'active' | 'completed', fromId: string, toId: string) {
     const groupItems = group === 'active' ? active : completed
     const fromIndex = groupItems.findIndex(t => t.id === fromId)
@@ -70,6 +76,7 @@ export function useTodos() {
     add,
     toggle,
     remove,
+    edit,
     reorderInGroup,
   }
 }
