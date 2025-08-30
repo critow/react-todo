@@ -25,6 +25,46 @@ export default [
       // React Hooks
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      // Import style
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['../../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['../../../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['../../../../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['./../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['./../../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['./../../../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+            {
+              group: ['./../../../../../*'],
+              message: 'Используйте алиас ~ вместо глубоких относительных импортов.',
+            },
+          ],
+        },
+      ],
     },
   },
   // Node окружение для конфигов/скриптов
@@ -33,6 +73,19 @@ export default [
     languageOptions: {
       globals: { ...globals.node },
       sourceType: 'commonjs',
+    },
+  },
+  {
+    files: ['scripts/**/*.mjs', '*.mjs'],
+    languageOptions: {
+      globals: { ...globals.node },
+      sourceType: 'module',
+    },
+    rules: {
+      // Разрешаем escape-последовательности в регэкспах утилитных скриптов
+      'no-useless-escape': 'off',
+      // В node-скриптах доступны process, __dirname и т.п.
+      'no-undef': 'off',
     },
   },
   {
