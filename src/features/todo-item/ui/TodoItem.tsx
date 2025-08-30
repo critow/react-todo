@@ -83,16 +83,6 @@ export const TodoItem = forwardRef<TodoItemHandle, Props>(function TodoItem(
           {todo.text}
         </span>
       )}
-      {!isEditing && (
-        <button
-          onClick={() => setIsEditing(true)}
-          className="text-gray-400 hover:text-indigo-600"
-          aria-label="Редактировать задачу"
-          title="Редактировать"
-        >
-          ✎
-        </button>
-      )}
       <button
         onClick={() => onRemove(todo.id)}
         className="text-gray-400 hover:text-red-600"
