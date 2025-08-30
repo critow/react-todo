@@ -1,6 +1,6 @@
-import { AddTodoForm } from '../../../features/add-todo/ui/AddTodoForm'
-import { SortableList } from '../../../features/reorder-todos/ui/SortableList'
-import { useTodos } from '../../../entities/todo/model/useTodos'
+import { AddTodoForm } from '~/features/add-todo/ui/AddTodoForm'
+import { SortableList } from '~/features/reorder-todos/ui/SortableList'
+import { useTodos } from '~/entities/todo/model/useTodos'
 
 export function TodosWidget() {
   const { active, completed, add, toggle, remove, reorderInGroup } = useTodos()

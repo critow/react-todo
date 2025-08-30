@@ -1,4 +1,4 @@
-import { TodosWidget } from '../../../widgets/todos/ui/TodosWidget'
+import { TodosWidget } from '~/widgets/todos/ui/TodosWidget'
 
 export function HomePage() {
   return (

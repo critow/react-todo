@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Todo } from './types'
-import { loadTodos, saveTodos } from '../lib/storage'
+import type { Todo } from '~/entities/todo/model/types'
+import { loadTodos, saveTodos } from '~/entities/todo/lib/storage'
 
 export function useTodos() {
   const [todos, setTodos] = useState<Todo[]>(() => loadTodos())
