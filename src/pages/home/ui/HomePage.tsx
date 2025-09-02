@@ -60,15 +60,20 @@ export function HomePage() {
                 : 'opacity-0 translate-y-2 scale-95')
             }
           >
-            <button
-              type="button"
-              onClick={hideHotkeys}
-              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-white border border-gray-200 shadow text-gray-500 hover:text-gray-800"
-              aria-label="Скрыть подсказку"
-              title="Скрыть подсказку"
-            >
-              ×
-            </button>
+            <div className="absolute -top-2 -right-2 group">
+              <button
+                type="button"
+                onClick={hideHotkeys}
+                className="h-6 w-6 rounded-full bg-white border border-gray-200 shadow text-gray-500 hover:text-gray-800"
+                aria-label="Скрыть подсказку"
+                title="Скрыть подсказку"
+              >
+                ×
+              </button>
+              <div className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-white text-[11px] opacity-0 transition group-hover:opacity-100">
+                Скрыть подсказку
+              </div>
+            </div>
             <div className="font-medium text-gray-800 mb-1">Горячие клавиши</div>
             <ul className="space-y-0.5">
               <li>
@@ -90,19 +95,24 @@ export function HomePage() {
         </div>
       )}
       {!showHotkeys && (
-        <button
-          type="button"
-          onClick={restoreHotkeys}
-          className={
-            `fixed bottom-4 right-4 h-9 w-9 rounded-full border border-gray-200 ` +
-            `bg-white/95 backdrop-blur text-gray-700 shadow hover:text-gray-900 ` +
-            `transition transform duration-200 opacity-100 translate-y-0`
-          }
-          aria-label="Показать подсказку по горячим клавишам"
-          title="Показать подсказку по горячим клавишам"
-        >
-          ?
-        </button>
+        <div className="fixed bottom-4 right-4 group">
+          <button
+            type="button"
+            onClick={restoreHotkeys}
+            className={
+              `h-9 w-9 rounded-full border border-gray-200 ` +
+              `bg-white/95 backdrop-blur text-gray-700 shadow hover:text-gray-900 ` +
+              `transition transform duration-200 opacity-100 translate-y-0`
+            }
+            aria-label="Показать подсказку по горячим клавишам"
+            title="Показать подсказку по горячим клавишам"
+          >
+            ?
+          </button>
+          <div className="pointer-events-none absolute bottom-full right-0 mb-2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-white text-[11px] opacity-0 transition group-hover:opacity-100">
+            Показать подсказку
+          </div>
+        </div>
       )}
     </div>
   )
