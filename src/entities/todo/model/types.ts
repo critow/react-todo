@@ -4,4 +4,6 @@ export type Todo = {
   completed: boolean
   createdAt: number
   completedAt?: number
+  dueAt?: number
+  dueNotifiedAt?: number
 }

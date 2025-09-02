@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Todo } from '~/entities/todo/model/types'
-import { loadTodos, saveTodos } from '~/entities/todo/lib/storage'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { Todo } from './types'
+import { loadTodos, saveTodos } from '../lib/storage'
 
 export function useTodos() {
   const [todos, setTodos] = useState<Todo[]>(() => loadTodos())
@@ -13,7 +13,7 @@ export function useTodos() {
   const active = useMemo(() => todos.filter(t => !t.completed), [todos])
   const completed = useMemo(() => todos.filter(t => t.completed), [todos])
 
-  function add(text: string) {
+  const add = useCallback((text: string) => {
     const value = text.trim()
     if (!value) return
     const newTodo: Todo = {
@@ -24,9 +24,9 @@ export function useTodos() {
     }
     setTodos(prev => [newTodo, ...prev])
     inputRef.current?.focus()
-  }
+  }, [])
 
-  function toggle(id: string) {
+  const toggle = useCallback((id: string) => {
     setTodos(prev =>
       prev.map(t =>
         t.id === id
@@ -38,29 +38,45 @@ export function useTodos() {
           : t,
       ),
     )
-  }
+  }, [])
 
-  function remove(id: string) {
+  const remove = useCallback((id: string) => {
     setTodos(prev => prev.filter(t => t.id !== id))
-  }
+  }, [])
 
-  function reorderInGroup(group: 'active' | 'completed', fromId: string, toId: string) {
-    const groupItems = group === 'active' ? active : completed
-    const fromIndex = groupItems.findIndex(t => t.id === fromId)
-    const toIndex = groupItems.findIndex(t => t.id === toId)
-    if (fromIndex < 0 || toIndex < 0) return
-    const copy = groupItems.slice()
-    const [moved] = copy.splice(fromIndex, 1)
-    copy.splice(toIndex, 0, moved)
-    // Сборка общего списка, встраиваем группу в новом порядке
-    let gi = 0
-    setTodos(prev =>
-      prev.map(t => {
-        const inGroup = group === 'active' ? !t.completed : t.completed
-        return inGroup ? copy[gi++] : t
-      }),
-    )
-  }
+  const edit = useCallback((id: string, text: string) => {
+    const value = text.trim()
+    if (!value) return
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, text: value } : t)))
+  }, [])
+
+  const setDue = useCallback((id: string, dueAt: number | undefined) => {
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, dueAt, dueNotifiedAt: undefined } : t)))
+  }, [])
+
+  const markDueNotified = useCallback((id: string) => {
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, dueNotifiedAt: Date.now() } : t)))
+  }, [])
+
+  const reorderInGroup = useCallback(
+    (group: 'active' | 'completed', fromId: string, toId: string) => {
+      setTodos(prev => {
+        const groupItems = prev.filter(t => (group === 'active' ? !t.completed : t.completed))
+        const fromIndex = groupItems.findIndex(t => t.id === fromId)
+        const toIndex = groupItems.findIndex(t => t.id === toId)
+        if (fromIndex < 0 || toIndex < 0) return prev
+        const copy = groupItems.slice()
+        const [moved] = copy.splice(fromIndex, 1)
+        copy.splice(toIndex, 0, moved)
+        let gi = 0
+        return prev.map(t => {
+          const inGroup = group === 'active' ? !t.completed : t.completed
+          return inGroup ? copy[gi++] : t
+        })
+      })
+    },
+    [],
+  )
 
   return {
     todos,
@@ -70,6 +86,9 @@ export function useTodos() {
     add,
     toggle,
     remove,
+    edit,
+    setDue,
+    markDueNotified,
     reorderInGroup,
   }
 }

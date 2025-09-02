@@ -6,17 +6,21 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  type DraggableAttributes,
 } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useRef } from 'react'
 import { CSS } from '@dnd-kit/utilities'
-import type { Todo } from '~/entities/todo/model/types'
-import { TodoItem } from '~/features/todo-item/ui/TodoItem'
+import type { Todo } from '~/entities/todo'
+import { TodoItem, type TodoItemHandle } from '~/features/todo-item'
 
 type Props = {
   items: Todo[]
   group: 'active' | 'completed'
   onToggle: (id: string) => void
   onRemove: (id: string) => void
+  onEdit: (id: string, text: string) => void
+  onSetDue: (id: string, dueAt: number | undefined) => void
   onReorder: (group: 'active' | 'completed', fromId: string, toId: string) => void
 }
 
@@ -24,33 +28,77 @@ function SortableTodo({
   todo,
   onToggle,
   onRemove,
+  onEdit,
+  onSetDue,
 }: {
   todo: Todo
   onToggle: (id: string) => void
   onRemove: (id: string) => void
+  onEdit: (id: string, text: string) => void
+  onSetDue: (id: string, dueAt: number | undefined) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: todo.id,
   })
   const style = { transform: CSS.Transform.toString(transform), transition }
+  const itemRef = useRef<TodoItemHandle>(null)
+  function isRecord(x: unknown): x is Record<string, unknown> {
+    return typeof x === 'object' && x !== null
+  }
+  function isDraggableAttributes(x: unknown): x is DraggableAttributes {
+    return isRecord(x) && 'role' in x
+  }
+  function isButtonDomAttrs(x: unknown): x is React.DOMAttributes<HTMLButtonElement> {
+    return isRecord(x)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLLIElement>) {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
+    const activeEl = document.activeElement
+    if (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement) return
+    e.preventDefault()
+    const current = e.currentTarget
+    const next = e.key === 'ArrowDown' ? current.nextElementSibling : current.previousElementSibling
+    if (next instanceof HTMLElement) next.focus()
+  }
+  function handleEnter(e: React.KeyboardEvent<HTMLLIElement>) {
+    if (e.key !== 'Enter') return
+    const activeEl = document.activeElement
+    if (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement) return
+    if (e.metaKey || e.ctrlKey) {
+      e.preventDefault()
+      itemRef.current?.startEdit()
+    } else {
+      e.preventDefault()
+      onToggle(todo.id)
+    }
+  }
   return (
     <li
       ref={setNodeRef}
       style={style}
-      className={`bg-white ${isDragging ? 'bg-indigo-50 shadow-sm' : ''}`}
+      className={`bg-white outline-none focus:ring-2 focus:ring-indigo-500 ${isDragging ? 'bg-indigo-50 shadow-sm' : ''}`}
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') handleKeyDown(e)
+        else if (e.key === 'Enter') handleEnter(e)
+      }}
     >
       <TodoItem
+        ref={itemRef}
         todo={todo}
         onToggle={onToggle}
         onRemove={onRemove}
+        onEdit={onEdit}
+        onSetDue={onSetDue}
         dragHandle={
           <button
             type="button"
             aria-label="Переместить задачу"
             title="Переместить"
-            className="mr-1 cursor-grab touch-none select-none text-gray-300 hover:text-gray-500"
-            {...attributes}
-            {...listeners}
+            className={`mr-1 touch-none select-none text-gray-300 hover:text-gray-500 ` + ``}
+            {...(isDraggableAttributes(attributes) ? attributes : {})}
+            {...(isButtonDomAttrs(listeners) ? listeners : {})}
           >
             ⋮⋮
           </button>
@@ -60,7 +108,15 @@ function SortableTodo({
   )
 }
 
-export function SortableList({ items, group, onToggle, onRemove, onReorder }: Props) {
+export function SortableList({
+  items,
+  group,
+  onToggle,
+  onRemove,
+  onEdit,
+  onSetDue,
+  onReorder,
+}: Props) {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 6 } }),
@@ -81,7 +137,14 @@ export function SortableList({ items, group, onToggle, onRemove, onReorder }: Pr
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <ul className="divide-y divide-gray-200 rounded-md border border-gray-200 bg-white">
           {items.map(t => (
-            <SortableTodo key={t.id} todo={t} onToggle={onToggle} onRemove={onRemove} />
+            <SortableTodo
+              key={t.id}
+              todo={t}
+              onToggle={onToggle}
+              onRemove={onRemove}
+              onEdit={onEdit}
+              onSetDue={onSetDue}
+            />
           ))}
         </ul>
       </SortableContext>
