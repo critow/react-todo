@@ -19,6 +19,7 @@ type Props = {
   onToggle: (id: string) => void
   onRemove: (id: string) => void
   onEdit: (id: string, text: string) => void
+  onSetDue: (id: string, dueAt: number | undefined) => void
   onReorder: (group: 'active' | 'completed', fromId: string, toId: string) => void
 }
 
@@ -27,11 +28,13 @@ function SortableTodo({
   onToggle,
   onRemove,
   onEdit,
+  onSetDue,
 }: {
   todo: Todo
   onToggle: (id: string) => void
   onRemove: (id: string) => void
   onEdit: (id: string, text: string) => void
+  onSetDue: (id: string, dueAt: number | undefined) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: todo.id,
@@ -80,6 +83,7 @@ function SortableTodo({
         onToggle={onToggle}
         onRemove={onRemove}
         onEdit={onEdit}
+        onSetDue={onSetDue}
         dragHandle={
           <button
             type="button"
@@ -97,7 +101,15 @@ function SortableTodo({
   )
 }
 
-export function SortableList({ items, group, onToggle, onRemove, onEdit, onReorder }: Props) {
+export function SortableList({
+  items,
+  group,
+  onToggle,
+  onRemove,
+  onEdit,
+  onSetDue,
+  onReorder,
+}: Props) {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 6 } }),
@@ -124,6 +136,7 @@ export function SortableList({ items, group, onToggle, onRemove, onEdit, onReord
               onToggle={onToggle}
               onRemove={onRemove}
               onEdit={onEdit}
+              onSetDue={onSetDue}
             />
           ))}
         </ul>

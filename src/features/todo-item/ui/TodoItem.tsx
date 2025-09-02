@@ -9,6 +9,7 @@ type Props = {
   onRemove: (id: string) => void
   dragHandle?: ReactNode
   onEdit?: (id: string, text: string) => void
+  onSetDue?: (id: string, dueAt: number | undefined) => void
 }
 
 export type TodoItemHandle = {
@@ -16,13 +17,14 @@ export type TodoItemHandle = {
 }
 
 export const TodoItem = forwardRef<TodoItemHandle, Props>(function TodoItem(
-  { todo, onToggle, onRemove, dragHandle, onEdit }: Props,
+  { todo, onToggle, onRemove, dragHandle, onEdit, onSetDue }: Props,
   ref,
 ) {
   const base = todo.completed ? 'text-gray-500 line-through' : 'text-gray-900'
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(todo.text)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [dueOpen, setDueOpen] = useState(false)
 
   useImperativeHandle(ref, () => ({ startEdit: () => setIsEditing(true) }), [])
 
@@ -48,6 +50,21 @@ export const TodoItem = forwardRef<TodoItemHandle, Props>(function TodoItem(
   function cancelEdit() {
     setIsEditing(false)
     setValue(todo.text)
+  }
+
+  function formatInputValue(ts?: number) {
+    if (!ts) return ''
+    const d = new Date(ts)
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+      d.getMinutes(),
+    )}`
+  }
+
+  function parseInputValue(v: string): number | undefined {
+    if (!v) return undefined
+    const t = Date.parse(v)
+    return Number.isNaN(t) ? undefined : t
   }
 
   return (
@@ -87,6 +104,33 @@ export const TodoItem = forwardRef<TodoItemHandle, Props>(function TodoItem(
           {todo.completed && todo.completedAt && (
             <span className="text-[11px] text-gray-400 whitespace-nowrap" title="Время выполнения">
               ⏱ за {formatDuration(todo.completedAt - todo.createdAt)}
+            </span>
+          )}
+          {onSetDue && (
+            <span className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setDueOpen(v => !v)}
+                className={`text-[11px] rounded px-1 py-0.5 border ${
+                  todo.dueAt && !todo.completed && todo.dueAt < Date.now()
+                    ? 'border-red-300 text-red-600'
+                    : 'border-gray-200 text-gray-500 hover:text-gray-700'
+                }`}
+                title="Установить дедлайн"
+                aria-label="Установить дедлайн"
+              >
+                {todo.dueAt ? new Date(todo.dueAt).toLocaleString() : 'Дедлайн'}
+              </button>
+              {dueOpen && (
+                <input
+                  type="datetime-local"
+                  className="text-[11px] border border-gray-300 rounded px-1 py-0.5"
+                  value={formatInputValue(todo.dueAt)}
+                  onChange={e => onSetDue(todo.id, parseInputValue(e.target.value))}
+                  onBlur={() => setDueOpen(false)}
+                  autoFocus
+                />
+              )}
             </span>
           )}
         </span>

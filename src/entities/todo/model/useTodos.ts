@@ -50,6 +50,10 @@ export function useTodos() {
     setTodos(prev => prev.map(t => (t.id === id ? { ...t, text: value } : t)))
   }
 
+  function setDue(id: string, dueAt: number | undefined) {
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, dueAt } : t)))
+  }
+
   function reorderInGroup(group: 'active' | 'completed', fromId: string, toId: string) {
     const groupItems = group === 'active' ? active : completed
     const fromIndex = groupItems.findIndex(t => t.id === fromId)
@@ -77,6 +81,7 @@ export function useTodos() {
     toggle,
     remove,
     edit,
+    setDue,
     reorderInGroup,
   }
 }

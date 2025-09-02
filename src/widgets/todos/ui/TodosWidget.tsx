@@ -3,7 +3,7 @@ import { SortableList } from '~/features/reorder-todos/ui/SortableList'
 import { useTodos } from '~/entities/todo/model/useTodos'
 
 export function TodosWidget() {
-  const { active, completed, add, toggle, remove, edit, reorderInGroup } = useTodos()
+  const { active, completed, add, toggle, remove, edit, setDue, reorderInGroup } = useTodos()
 
   return (
     <div>
@@ -22,6 +22,7 @@ export function TodosWidget() {
             onToggle={toggle}
             onRemove={remove}
             onEdit={edit}
+            onSetDue={setDue}
             onReorder={reorderInGroup}
           />
         )}
@@ -40,6 +41,7 @@ export function TodosWidget() {
             onToggle={toggle}
             onRemove={remove}
             onEdit={edit}
+            onSetDue={setDue}
             onReorder={reorderInGroup}
           />
         )}
