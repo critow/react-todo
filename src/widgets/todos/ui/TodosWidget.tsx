@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AddTodoForm } from '~/features/add-todo'
 import { SortableList } from '~/features/reorder-todos'
 import { useTodos } from '~/entities/todo'
@@ -116,9 +116,9 @@ export function TodosWidget() {
     // run once on mount
   }, [])
 
-  function removeToast(id: string) {
+  const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id))
-  }
+  }, [])
 
   useEffect(() => {
     if (toasts.length === 0) return
