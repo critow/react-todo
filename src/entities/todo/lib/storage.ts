@@ -1,4 +1,4 @@
-import type { Todo } from '~/entities/todo/model/types'
+import type { Todo } from '../model/types'
 
 const STORAGE_KEY = 'todos'
 

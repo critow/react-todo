@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Todo } from '~/entities/todo/model/types'
-import { loadTodos, saveTodos } from '~/entities/todo/lib/storage'
+import type { Todo } from './types'
+import { loadTodos, saveTodos } from '../lib/storage'
 
 export function useTodos() {
   const [todos, setTodos] = useState<Todo[]>(() => loadTodos())
@@ -51,7 +51,11 @@ export function useTodos() {
   }
 
   function setDue(id: string, dueAt: number | undefined) {
-    setTodos(prev => prev.map(t => (t.id === id ? { ...t, dueAt } : t)))
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, dueAt, dueNotifiedAt: undefined } : t)))
+  }
+
+  function markDueNotified(id: string) {
+    setTodos(prev => prev.map(t => (t.id === id ? { ...t, dueNotifiedAt: Date.now() } : t)))
   }
 
   function reorderInGroup(group: 'active' | 'completed', fromId: string, toId: string) {
@@ -82,6 +86,7 @@ export function useTodos() {
     remove,
     edit,
     setDue,
+    markDueNotified,
     reorderInGroup,
   }
 }

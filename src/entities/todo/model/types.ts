@@ -5,4 +5,5 @@ export type Todo = {
   createdAt: number
   completedAt?: number
   dueAt?: number
+  dueNotifiedAt?: number
 }

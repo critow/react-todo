@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TodosWidget } from '~/widgets/todos/ui/TodosWidget'
+import { TodosWidget } from '~/widgets/todos'
 
 export function HomePage() {
   const [showHotkeys, setShowHotkeys] = useState(true)

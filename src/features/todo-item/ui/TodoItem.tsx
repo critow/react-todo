@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import type { Todo } from '~/entities/todo/model/types'
-import { formatDuration } from '~/shared/lib/time'
+import type { Todo } from '~/entities/todo'
+import { formatDuration, formatRelativeToNow } from '~/shared/lib/time'
 
 type Props = {
   todo: Todo
@@ -121,6 +121,11 @@ export const TodoItem = forwardRef<TodoItemHandle, Props>(function TodoItem(
               >
                 {todo.dueAt ? new Date(todo.dueAt).toLocaleString() : 'Дедлайн'}
               </button>
+              {todo.dueAt && !todo.completed && (
+                <span className="text-[11px] text-gray-400" title="Относительно текущего времени">
+                  {formatRelativeToNow(todo.dueAt)}
+                </span>
+              )}
               {dueOpen && (
                 <input
                   type="datetime-local"

@@ -21,6 +21,11 @@ function toAlias(fromFile, source) {
   if (!source.startsWith('../')) return null
   const abs = path.resolve(path.dirname(fromFile), source)
   if (!abs.startsWith(SRC_ROOT)) return null
+  // Do not aliasize imports within the same slice (e.g., entities/todo/*)
+  const relFrom = path.relative(SRC_ROOT, fromFile)
+  const seg = relFrom.split(path.sep)
+  const sliceRoot = path.join(SRC_ROOT, seg[0] || '', seg[1] || '')
+  if (abs.startsWith(sliceRoot)) return null
   let relToSrc = path.relative(SRC_ROOT, abs).replace(/\\/g, '/')
   if (!relToSrc) return null
   return `~/${relToSrc}`

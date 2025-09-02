@@ -6,12 +6,13 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  type DraggableAttributes,
 } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useRef } from 'react'
 import { CSS } from '@dnd-kit/utilities'
-import type { Todo } from '~/entities/todo/model/types'
-import { TodoItem, type TodoItemHandle } from '~/features/todo-item/ui/TodoItem'
+import type { Todo } from '~/entities/todo'
+import { TodoItem, type TodoItemHandle } from '~/features/todo-item'
 
 type Props = {
   items: Todo[]
@@ -41,6 +42,8 @@ function SortableTodo({
   })
   const style = { transform: CSS.Transform.toString(transform), transition }
   const itemRef = useRef<TodoItemHandle>(null)
+  const dragAttributes = attributes as DraggableAttributes
+  const dragListeners = listeners as React.DOMAttributes<HTMLButtonElement>
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLLIElement>) {
     if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
@@ -89,9 +92,9 @@ function SortableTodo({
             type="button"
             aria-label="Переместить задачу"
             title="Переместить"
-            className="mr-1 cursor-grab touch-none select-none text-gray-300 hover:text-gray-500"
-            {...attributes}
-            {...listeners}
+            className={`mr-1 touch-none select-none text-gray-300 hover:text-gray-500 ` + ``}
+            {...dragAttributes}
+            {...dragListeners}
           >
             ⋮⋮
           </button>

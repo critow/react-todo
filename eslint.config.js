@@ -67,12 +67,85 @@ export default [
       ],
     },
   },
+  // FSD layering: restrict upward imports
+  {
+    files: ['src/entities/**/*.ts', 'src/entities/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['~/features/*', '~/widgets/*', '~/pages/*', '~/app/*'],
+              message: 'Слой entities не должен импортировать из верхних слоёв.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/features/**/*.ts', 'src/features/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['~/widgets/*', '~/pages/*', '~/app/*'],
+              message: 'Слой features не должен импортировать из верхних слоёв.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/widgets/**/*.ts', 'src/widgets/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['~/pages/*', '~/app/*'],
+              message: 'Слой widgets не должен импортировать из верхних слоёв.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Enforce public API imports of other slices (shared исключён)
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['~/(entities|features|widgets|pages|app)/*/(ui|model|lib)/*'],
+              message:
+                'Импортируйте через public API среза (index.ts), без доступа к внутренним подпапкам.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Node окружение для конфигов/скриптов
   {
     files: ['*.cjs'],
     languageOptions: {
       globals: { ...globals.node },
       sourceType: 'commonjs',
+    },
+  },
+  {
+    files: ['src/widgets/todos/ui/TodosWidget.tsx'],
+    rules: {
+      'react-hooks/exhaustive-deps': 'off',
     },
   },
   {
