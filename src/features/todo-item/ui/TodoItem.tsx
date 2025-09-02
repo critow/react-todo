@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Todo } from '~/entities/todo/model/types'
+import { formatDuration } from '~/shared/lib/time'
 
 type Props = {
   todo: Todo
@@ -73,14 +74,21 @@ export const TodoItem = forwardRef<TodoItemHandle, Props>(function TodoItem(
           aria-label="Редактировать текст задачи"
         />
       ) : (
-        <span
-          role="button"
-          tabIndex={-1}
-          onClick={() => setIsEditing(true)}
-          className={`flex-1 text-sm cursor-text ${base}`}
-          title="Нажмите, чтобы редактировать"
-        >
-          {todo.text}
+        <span className="flex-1 flex items-center gap-2">
+          <span
+            role="button"
+            tabIndex={-1}
+            onClick={() => setIsEditing(true)}
+            className={`flex-1 text-sm cursor-text ${base}`}
+            title="Нажмите, чтобы редактировать"
+          >
+            {todo.text}
+          </span>
+          {todo.completed && todo.completedAt && (
+            <span className="text-[11px] text-gray-400 whitespace-nowrap" title="Время выполнения">
+              ⏱ за {formatDuration(todo.completedAt - todo.createdAt)}
+            </span>
+          )}
         </span>
       )}
       <button
