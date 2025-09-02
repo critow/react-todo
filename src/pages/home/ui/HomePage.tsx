@@ -3,6 +3,7 @@ import { TodosWidget } from '~/widgets/todos/ui/TodosWidget'
 
 export function HomePage() {
   const [showHotkeys, setShowHotkeys] = useState(true)
+  const [hintReady, setHintReady] = useState(false)
 
   useEffect(() => {
     try {
@@ -12,6 +13,17 @@ export function HomePage() {
       /* ignore */
     }
   }, [])
+
+  // Animate in when shown
+  useEffect(() => {
+    if (showHotkeys) {
+      // next frame to allow transition
+      const id = requestAnimationFrame(() => setHintReady(true))
+      return () => cancelAnimationFrame(id)
+    } else {
+      setHintReady(false)
+    }
+  }, [showHotkeys])
 
   function hideHotkeys() {
     setShowHotkeys(false)
@@ -39,7 +51,15 @@ export function HomePage() {
       </div>
       {showHotkeys && (
         <div className="fixed bottom-4 right-4 max-w-xs text-xs text-gray-600">
-          <div className="relative rounded-md border border-gray-200 bg-white/95 backdrop-blur px-3 py-2 shadow-sm">
+          <div
+            className={
+              `relative rounded-md border border-gray-200 bg-white/95 backdrop-blur px-3 py-2 shadow-sm ` +
+              `transition duration-200 ease-out transform ` +
+              (hintReady
+                ? 'opacity-100 translate-y-0 scale-100'
+                : 'opacity-0 translate-y-2 scale-95')
+            }
+          >
             <button
               type="button"
               onClick={hideHotkeys}
@@ -73,7 +93,11 @@ export function HomePage() {
         <button
           type="button"
           onClick={restoreHotkeys}
-          className="fixed bottom-4 right-4 h-9 w-9 rounded-full border border-gray-200 bg-white/95 backdrop-blur text-gray-700 shadow hover:text-gray-900"
+          className={
+            `fixed bottom-4 right-4 h-9 w-9 rounded-full border border-gray-200 ` +
+            `bg-white/95 backdrop-blur text-gray-700 shadow hover:text-gray-900 ` +
+            `transition transform duration-200 opacity-100 translate-y-0`
+          }
           aria-label="Показать подсказку по горячим клавишам"
           title="Показать подсказку по горячим клавишам"
         >
