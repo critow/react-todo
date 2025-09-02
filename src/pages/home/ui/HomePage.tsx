@@ -22,6 +22,15 @@ export function HomePage() {
     }
   }
 
+  function restoreHotkeys() {
+    setShowHotkeys(true)
+    try {
+      localStorage.removeItem('hotkeys_hint_hidden')
+    } catch {
+      /* ignore */
+    }
+  }
+
   return (
     <div className="min-h-full py-10">
       <div className="mx-auto max-w-xl px-4">
@@ -59,6 +68,17 @@ export function HomePage() {
             </ul>
           </div>
         </div>
+      )}
+      {!showHotkeys && (
+        <button
+          type="button"
+          onClick={restoreHotkeys}
+          className="fixed bottom-4 right-4 h-9 w-9 rounded-full border border-gray-200 bg-white/95 backdrop-blur text-gray-700 shadow hover:text-gray-900"
+          aria-label="Показать подсказку по горячим клавишам"
+          title="Показать подсказку по горячим клавишам"
+        >
+          ?
+        </button>
       )}
     </div>
   )
