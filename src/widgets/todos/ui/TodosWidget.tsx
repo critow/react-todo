@@ -17,6 +17,12 @@ export function TodosWidget() {
   const [notifyEnabled, setNotifyEnabled] = useState(true)
   const [notifySound, setNotifySound] = useState(false)
   const [notifyVibrate, setNotifyVibrate] = useState(false)
+  const filterOptions: Array<[Filter, string]> = [
+    ['all', 'Все'],
+    ['overdue', 'Просроченные'],
+    ['today', 'Сегодня'],
+    ['week', 'Неделя'],
+  ]
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 60_000)
@@ -132,14 +138,7 @@ export function TodosWidget() {
         </h2>
         <div className="mb-3 flex items-center gap-3 text-xs flex-wrap">
           <span className="text-gray-500">Фильтр:</span>
-          {(
-            [
-              ['all', 'Все'],
-              ['overdue', 'Просроченные'],
-              ['today', 'Сегодня'],
-              ['week', 'Неделя'],
-            ] as [Filter, string][]
-          ).map(([key, label]) => (
+          {filterOptions.map(([key, label]) => (
             <button
               key={key}
               onClick={() => setFilter(key)}

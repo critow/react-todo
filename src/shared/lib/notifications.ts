@@ -1,13 +1,12 @@
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext
+  }
+}
+
 export function triggerBeep() {
   try {
-    const Ctx =
-      (
-        window as unknown as {
-          AudioContext?: typeof AudioContext
-          webkitAudioContext?: typeof AudioContext
-        }
-      ).AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    const Ctx = window.AudioContext || window.webkitAudioContext
     if (!Ctx) return
     const ctx = new Ctx()
     const o = ctx.createOscillator()

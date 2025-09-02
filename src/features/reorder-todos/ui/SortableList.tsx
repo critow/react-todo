@@ -42,25 +42,29 @@ function SortableTodo({
   })
   const style = { transform: CSS.Transform.toString(transform), transition }
   const itemRef = useRef<TodoItemHandle>(null)
-  const dragAttributes = attributes as DraggableAttributes
-  const dragListeners = listeners as React.DOMAttributes<HTMLButtonElement>
+  function isRecord(x: unknown): x is Record<string, unknown> {
+    return typeof x === 'object' && x !== null
+  }
+  function isDraggableAttributes(x: unknown): x is DraggableAttributes {
+    return isRecord(x) && 'role' in x
+  }
+  function isButtonDomAttrs(x: unknown): x is React.DOMAttributes<HTMLButtonElement> {
+    return isRecord(x)
+  }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLLIElement>) {
     if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
-    const activeEl = document.activeElement as HTMLElement | null
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) return
+    const activeEl = document.activeElement
+    if (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement) return
     e.preventDefault()
-    const current = e.currentTarget as HTMLElement
-    const next =
-      e.key === 'ArrowDown'
-        ? (current.nextElementSibling as HTMLElement | null)
-        : (current.previousElementSibling as HTMLElement | null)
-    next?.focus()
+    const current = e.currentTarget
+    const next = e.key === 'ArrowDown' ? current.nextElementSibling : current.previousElementSibling
+    if (next instanceof HTMLElement) next.focus()
   }
   function handleEnter(e: React.KeyboardEvent<HTMLLIElement>) {
     if (e.key !== 'Enter') return
-    const activeEl = document.activeElement as HTMLElement | null
-    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) return
+    const activeEl = document.activeElement
+    if (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement) return
     if (e.metaKey || e.ctrlKey) {
       e.preventDefault()
       itemRef.current?.startEdit()
@@ -93,8 +97,8 @@ function SortableTodo({
             aria-label="Переместить задачу"
             title="Переместить"
             className={`mr-1 touch-none select-none text-gray-300 hover:text-gray-500 ` + ``}
-            {...dragAttributes}
-            {...dragListeners}
+            {...(isDraggableAttributes(attributes) ? attributes : {})}
+            {...(isButtonDomAttrs(listeners) ? listeners : {})}
           >
             ⋮⋮
           </button>
